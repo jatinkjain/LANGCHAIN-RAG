@@ -3,12 +3,14 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_huggingface import HuggingFaceEndpoint
+from langchain_huggingface import HuggingFaceEndpoint,ChatHuggingFace
+from huggingface_hub import InferenceClient
+from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 
 
 load_dotenv()
-"""
+
 loader = PyPDFLoader("data/rag_chatbot_practice_notes.pdf")
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size = 500,
@@ -40,20 +42,21 @@ formatted_prompt = prompt.invoke({
     "context": "RAG stands for Retrieval-Augmented Generation.",
     "question": question
 })
-"""
+
 
 llm = HuggingFaceEndpoint(
-    repo_id= "Qwen/Qwen2.5-7B-Instruct",
-    task= "conversational",
-    max_new_tokens=256,
-    temperature=0.5
+    repo_id = "deepseek-ai/DeepSeek-R1-0528",
+    task = "conversational",
+    max_new_tokens=512,
+    temperature= 0.1,
+    provider= "auto",
+    timeout = 120
 )
 
-result = llm.invoke("what is RAG?")
+ll2 = ChatHuggingFace(llm=llm)
 
 
-#print(formatted_prompt)
 
-#result = retriever.invoke("what is RAG?")
+result = ll2.invoke("what is RAG?")
 
 print(result)
